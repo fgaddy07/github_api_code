@@ -1,7 +1,6 @@
 var RepoPR = [];
 var AllPR = [];
 
-//creates ajax call to get repo names
 var RepoNames = $.ajax({
   url: "https://api.github.com/orgs/ramda/repos",
   global: false,
@@ -10,14 +9,13 @@ var RepoNames = $.ajax({
   async: false,
   success: function(msg) {
     for (var i = 0; i < msg.length; i++) {
-    	//passing the repo names into RepoPulls function
     	RepoPulls(msg[i].name);
     }
   }
 }).responseText;
 
 function RepoPulls(names) {
-var urlString = "https://api.github.com/repos/ramda/" + names + "/pulls?per_page=100";
+var urlString = "https://api.github.com/repos/ramda/" + names + "/pulls?per_page=90&state=all";
 $.ajax({
     type: "GET",
     url: urlString,
@@ -25,21 +23,20 @@ $.ajax({
     async: 'false',
     success: function(response) {
     if(response.length > 0){
-    	//stores the repo pull requests into local storage under the repo names
       	localStorage.setItem(names,JSON.stringify(response));
       }
     }
 })
 }
 
-//loops through all of the local storages keys to get pull request values and places them into the AllPR array
 for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
     AllPR.push((JSON.parse(localStorage.getItem(key))));
 }
 
-//for loop to count the number of pull requests that were received
 var PRAmount = 0;
 for( let i = 0; i < AllPR.length; i++){
 	PRAmount += AllPR[i].length;
 }
+
+console.log(PRAmount);
