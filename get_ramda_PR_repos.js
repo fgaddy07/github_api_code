@@ -1,42 +1,46 @@
-var RepoPR = [];
 var AllPR = [];
 
-var RepoNames = $.ajax({
-  url: "https://api.github.com/orgs/ramda/repos",
-  global: false,
-  type: "get",
-  dataType: "json",
-  async: false,
-  success: function(msg) {
-    for (var i = 0; i < msg.length; i++) {
-    	RepoPulls(msg[i].name);
-    }
+const AllNames = async function() {
+
+  let urlString = "https://api.github.com/orgs/ramda/repos";
+  var apiResults = fetch(urlString)
+    .then(resp => {
+      return resp.json();
+    });
+
+  return apiResults;
+
+}
+
+const getNames = async function(names, pageNo = 1) {
+
+  let urlString = "https://api.github.com/repos/ramda/" + names + "/pulls?per_page=100&page=" + pageNo + "&state=all";
+  var apiResults = await fetch(urlString)
+    .then(resp => {
+      return resp.json();
+    });
+
+  return apiResults;
+
+}
+
+const getAllPRs = async function(name, pageNo) {
+  const results = await getNames(name, pageNo);
+  console.log("Retreiving data from API for name: "+ name +" and page : " + pageNo);
+  if (results.length > 0) {
+    return results.concat(await getAllPRs(name,pageNo + 1));
+  } else {
+    return results;
   }
-}).responseText;
+};
 
-function RepoPulls(names) {
-var urlString = "https://api.github.com/repos/ramda/" + names + "/pulls?per_page=90&state=all";
-$.ajax({
-    type: "GET",
-    url: urlString,
-    dataType: "json",
-    async: 'false',
-    success: function(response) {
-    if(response.length > 0){
-      	localStorage.setItem(names,JSON.stringify(response));
-      }
-    }
-})
-}
 
-for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    AllPR.push((JSON.parse(localStorage.getItem(key))));
-}
+(async () => {
+  const name = await AllNames();
+  for (var i = 0; i < name.length; i++) {
+    const entireList = await getAllPRs(name[i].name, pageNo = 1);
+    AllPR.push(entireList);
+  }
+  console.log(AllPR);
 
-var PRAmount = 0;
-for( let i = 0; i < AllPR.length; i++){
-	PRAmount += AllPR[i].length;
-}
-
-console.log(PRAmount);
+})();
