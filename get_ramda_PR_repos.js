@@ -26,9 +26,9 @@ const getNames = async function(names, pageNo = 1) {
 
 const getAllPRs = async function(name, pageNo) {
   const results = await getNames(name, pageNo);
-  console.log("Retreiving data from API for name: "+ name +" and page : " + pageNo);
+  console.log("Retreiving data from API for name: " + name + " and page : " + pageNo);
   if (results.length > 0) {
-    return results.concat(await getAllPRs(name,pageNo + 1));
+    return results.concat(await getAllPRs(name, pageNo + 1));
   } else {
     return results;
   }
@@ -39,8 +39,16 @@ const getAllPRs = async function(name, pageNo) {
   const name = await AllNames();
   for (var i = 0; i < name.length; i++) {
     const entireList = await getAllPRs(name[i].name, pageNo = 1);
+    if(entireList.length > 0){
     AllPR.push(entireList);
+    }
   }
   console.log(AllPR);
 
+  function flatten(arr) {
+    return arr.reduce((acc, cur) => acc.concat(Array.isArray(cur) ? flatten(cur) : cur), []);
+  };
+	
+  const GiantArray = flatten(AllPR);
+  console.log(GiantArray);
 })();
