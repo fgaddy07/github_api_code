@@ -12,7 +12,7 @@ const AllNames = async function() {
 
 }
 
-const getNames = async function(names, pageNo = 1) {
+const getPR = async function(names, pageNo = 1) {
 
   let urlString = "https://api.github.com/repos/ramda/" + names + "/pulls?per_page=100&page=" + pageNo + "&state=all";
   var apiResults = await fetch(urlString)
@@ -25,7 +25,7 @@ const getNames = async function(names, pageNo = 1) {
 }
 
 const getAllPRs = async function(name, pageNo) {
-  const results = await getNames(name, pageNo);
+  const results = await getPR(name, pageNo);
   console.log("Retreiving data from API for name: " + name + " and page : " + pageNo);
   if (results.length > 0) {
     return results.concat(await getAllPRs(name, pageNo + 1));
