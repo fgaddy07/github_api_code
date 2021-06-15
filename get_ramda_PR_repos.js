@@ -12,7 +12,7 @@ const AllNames = async function() {
 
 }
 
-const getPR = async function(names, pageNo = 1) {
+const getPR = async function(names, pageNo) {
 
   let urlString = "https://api.github.com/repos/ramda/" + names + "/pulls?per_page=100&page=" + pageNo + "&state=all";
   var apiResults = await fetch(urlString)
