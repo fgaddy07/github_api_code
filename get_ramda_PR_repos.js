@@ -51,4 +51,10 @@ const getAllPRs = async function(name, pageNo) {
 	
   const GiantArray = flatten(AllPR);
   console.log(GiantArray);
+	
+  let filteredArray = GiantArray.filter(PRArray =>
+    PRArray.merged_at != null
+  ).sort((c1, c2) => new Date(c2.merged_at) - new Date (c1.merged_at));
+
+  console.log(filteredArray);
 })();
